@@ -1,9 +1,4 @@
----
-title: "時間序列第十次作業"
-author: "統計三王翰元 103304024"
-date: "2017年6月7日"
-output: html_document
----
+
 
 ```{r echo=F}
 require(magrittr)
