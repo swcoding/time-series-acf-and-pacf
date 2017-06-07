@@ -1,0 +1,137 @@
+---
+title: "時間序列第十次作業"
+author: "統計三王翰元 103304024"
+date: "2017年6月7日"
+output: html_document
+---
+
+```{r echo=F}
+require(magrittr)
+require(forecast)
+```
+
+# 5.60
+
+$y_{t} = 25 + 0.6*y_{t-1} + 0.25*y_{t-2} + \epsilon_{t}$
+
+## a小題
+
+```{r}
+  acf = ARMAacf(ar = c(0.6,0.25),lag.max=25)
+  pacf = ARMAacf(ar = c(0.6,0.25),lag.max=25, pacf = T)
+  par(mfrow=c(1,2))  
+  barplot(acf,main = "theoretical ACF",
+            xlab = "lag",
+            ylab = "acf")
+
+    barplot(pacf,main = "theoretical PACF",
+            xlab = "lag",
+            ylab = "pacf")
+```
+
+## b小題
+
+```{r}
+    y.b = c(1,2)
+    for(i in 3:50){
+      y.b %<>% append(., 25 + 0.6*y.b[i-1] + 0.25*y.b[i-2] + rnorm(1,0,1))
+    }
+      
+      tsdisplay(y.b)
+```
+
+## c小題
+
+```{r}
+    y.c = c(1,2)
+    for(i in 3:200){
+      y.c %<>% append(., 25 + 0.6*y.c[i-1] + 0.25*y.c[i-2] + rnorm(1,0,1))
+    }
+    tsdisplay(y.c)
+```
+
+> 從b小題的結果中可以看到，ACF收斂在lag = 15附近；而在c小題中期數變長，ACF收斂的地方往後拉長許多，與理論值的圖較為相似。而PACF則沒有太多變化。
+
+# 5.61
+
+$y_{t} = 40 + 0.4*\epsilon_{t-1} + \epsilon_{t}$
+
+## a小題
+
+```{r}
+  acf = ARMAacf(ma = c(0.4),lag.max = 25)
+  pacf = ARMAacf(ma = 0.4,lag.max = 25,pacf=T)
+    par(mfrow=c(1,2))    
+  barplot(acf,main = "theoretical ACF", xlab = "lag",
+          ylab = "acf")
+    barplot(pacf,main = "theoretical ACF", xlab = "lag",
+            ylab = "pacf")
+```
+
+## b小題
+
+```{r}
+    y = c(rnorm(1,0,sqrt(2)))
+    for(i in 2:50){
+      y %<>% append(., 40 + 0.4*y[i-1] + rnorm(1,0,sqrt(2)))
+    }
+      
+      tsdisplay(y)
+```
+
+## c小題
+
+```{r}
+    y.c = c(rnorm(1,0,sqrt(2)))
+    for(i in 2:200){
+      y.c %<>% append(., 40 + 0.4*y.c[i-1] + rnorm(1,0,sqrt(2)))
+    }
+      tsdisplay(y.c)
+```
+
+> b小題中，ACF 在 lag= 2時，並沒有理論值來的顯著（低於顯著水準）；但是在c小題中，期數變長，ACF在lag = 1,2時皆超過顯著水準，與理論值的圖較為相似。而PACF的圖則沒有太大差異。
+
+# 5.62
+
+$y_{t} = 50 - 0.7*y_{t-1} + 0.5*\epsilon_{t-1} + \epsilon_{t}$
+
+## a小題
+
+```{r}
+    acf = ARMAacf(ar = -0.7, ma = 0.5, lag.max = 25)
+    pacf = ARMAacf(ar = -0.7, ma = 0.5, lag.max = 25, pacf = T)
+    par(mfrow=c(1,2))  
+    barplot(acf,main = "theoretical ACF",
+            xlab = "lag",
+            ylab = "acf")
+
+    barplot(pacf,main = "theoretical PACF",
+            xlab = "lag",
+            ylab = "pacf")
+```
+
+## b小題
+
+```{r}
+    y.b = c(1)
+    e = c(rnorm(1,0,sqrt(2)))
+    for(i in 2:50){
+      e[i] = 0.5*e[i-1]
+      y.b[i] = 50 - 0.7*y.b[i-1] + e[i] + rnorm(1,0,sqrt(2))
+    }
+      tsdisplay(y.b)
+```
+
+## c小題
+
+```{r}
+    y.c = c(1)
+    e = c(rnorm(1,0,sqrt(2)))
+    for(i in 2:200){
+      e[i] = 0.5*e[i-1]
+      y.c[i] = 50 - 0.7*y.c[i-1] + e[i] + rnorm(1,0,sqrt(2))
+    }
+      tsdisplay(y.c)
+```
+
+> 由b,c的結果可以得知，當期數變長時，ACF衰退的速度會被放慢，即decay到接近零的lag會變大，而PACF則沒有太大變化。
